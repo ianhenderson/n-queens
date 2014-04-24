@@ -74,6 +74,7 @@ window.findNRooksSolution = function( n ) {
   //    set lastPiece = n-1;
     lastPiece = n - 1;
   //  ...while loop to iterate pieces over board as long as pieces[0] < n*n && there are collisions
+
   } while ( pieces[0][0] < n && solution.hasAnyRowConflicts() );
   //
   //  return array (or null)
@@ -82,10 +83,18 @@ window.findNRooksSolution = function( n ) {
   } else {
   //  build array to return
     solution = solution.rows();
+
+  //  pass current piece values back to calling object if additional arguments supplied
+    if ( arguments[1] !== undefined ) {
+      for ( index = 0; index < pieces.length; index++ ) {
+        arguments[index+1][0] = pieces[index][0];
+        arguments[index+1][1] = pieces[index][1];
+      }
+    }
   }
   //
 
-  console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
+  //  console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
   return solution;
 };
 
@@ -116,61 +125,60 @@ window.createAllNRooksSolutions = function(n) {
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
   var unfilteredSolutions = window.createAllNRooksSolutions(n);
-  var solutions = [];
-  var stringSolutions = {};
+  var solutions = unfilteredSolutions;
+  // var stringSolutions = {};
 
 
-  // clockwise rotation
-  var rotate = function(arr){
-    var tmp = [];
-    for (var col=0;col<n; col++){
-      tmp[col]=[];
-      for (var row=n-1; row>=0; row--){
-        tmp[col].push(arr[row][col]);
-      }
-    }
-    return tmp;
-  };
-  // flip about x-axis
-  var flip = function(arr){
-    var tmp = [];
-    for (var row=arr.length-1;row >= 0; row--){
-      tmp.push(arr[row].slice());
-    }
-    return tmp;
-  };
+  // // clockwise rotation
+  // var rotate = function(arr){
+  //   var tmp = [];
+  //   for (var col=0;col<n; col++){
+  //     tmp[col]=[];
+  //     for (var row=n-1; row>=0; row--){
+  //       tmp[col].push(arr[row][col]);
+  //     }
+  //   }
+  //   return tmp;
+  // };
+  // // flip about x-axis
+  // var flip = function(arr){
+  //   var tmp = [];
+  //   for (var row=arr.length-1;row >= 0; row--){
+  //     tmp.push(arr[row].slice());
+  //   }
+  //   return tmp;
+  // };
 
-  debugger;
-  for ( var num = 0; num < unfilteredSolutions.length; num++ ) {
-    var variantStrings = [];
-    var original = unfilteredSolutions[num].slice();
+  // for ( var num = 0; num < unfilteredSolutions.length; num++ ) {
+  //   var variantStrings = [];
+  //   var original = unfilteredSolutions[num].slice();
 
-    var temp = rotate(original); // rotate 90deg
-    variantStrings.push(JSON.stringify(temp));
-    temp = rotate(temp); //rotate 180deg
-    variantStrings.push(JSON.stringify(temp));
-    temp = rotate(temp); //rotate 270deg
-    variantStrings.push(JSON.stringify(temp));
-    temp = flip(original); //flipped once
-    variantStrings.push(JSON.stringify(temp));
-    temp = rotate(temp); //flipped once, rotate 90deg
-    variantStrings.push(JSON.stringify(temp));
-    temp = rotate(temp); //flipped once, rotate 180deg
-    variantStrings.push(JSON.stringify(temp));
-    temp = rotate(temp); //flipped once, rotate 270deg
-    variantStrings.push(JSON.stringify(temp));
+  //   var temp = rotate(original); // rotate 90deg
+  //   variantStrings.push(JSON.stringify(temp));
+  //   temp = rotate(temp); //rotate 180deg
+  //   variantStrings.push(JSON.stringify(temp));
+  //   temp = rotate(temp); //rotate 270deg
+  //   variantStrings.push(JSON.stringify(temp));
+  //   temp = flip(original); //flipped once
+  //   variantStrings.push(JSON.stringify(temp));
+  //   temp = rotate(temp); //flipped once, rotate 90deg
+  //   variantStrings.push(JSON.stringify(temp));
+  //   temp = rotate(temp); //flipped once, rotate 180deg
+  //   variantStrings.push(JSON.stringify(temp));
+  //   temp = rotate(temp); //flipped once, rotate 270deg
+  //   variantStrings.push(JSON.stringify(temp));
 
-    var uniqueMatrix = true;
-    for (var i=0;i<variantStrings.length;i++){
-      if (stringSolutions[variantStrings[i]] !== undefined){
-        uniqueMatrix = false;
-      }
-    }
-    if (uniqueMatrix) {
-      stringSolutions[JSON.stringify(original)] = 1;
-      solutions.push(original);
-    }
-  }
+  //   var uniqueMatrix = true;
+  //   for (var i=0;i<variantStrings.length;i++){
+  //     if (stringSolutions[variantStrings[i]] !== undefined){
+  //       uniqueMatrix = false;
+  //     }
+  //   }
+  //   if (uniqueMatrix) {
+  //     stringSolutions[JSON.stringify(original)] = 1;
+  //     solutions.push(original);
+  //   }
+  // }
 
   var solutionCount = solutions.length;
   console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
