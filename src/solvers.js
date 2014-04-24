@@ -117,9 +117,59 @@ window.createAllNRooksSolutions = function(n) {
 window.countNRooksSolutions = function(n) {
   var unfilteredSolutions = window.createAllNRooksSolutions(n);
   var solutions = [];
+  var stringSolutions = {};
 
+
+  // clockwise rotation
+  var rotate = function(arr){
+    var tmp = [];
+    for (var col=0;col<n; col++){
+      tmp[col]=[];
+      for (var row=n-1; row>=0; row--){
+        tmp[col].push(arr[row][col]);
+      }
+    }
+    return tmp;
+  };
+  // flip about x-axis
+  var flip = function(arr){
+    var tmp = [];
+    for (var row=arr.length-1;row >= 0; row--){
+      tmp.push(arr[row].slice());
+    }
+    return tmp;
+  };
+
+  debugger;
   for ( var num = 0; num < unfilteredSolutions.length; num++ ) {
+    var variantStrings = [];
+    var original = unfilteredSolutions[num].slice();
 
+    var temp = rotate(original); // rotate 90deg
+    variantStrings.push(JSON.stringify(temp));
+    temp = rotate(temp); //rotate 180deg
+    variantStrings.push(JSON.stringify(temp));
+    temp = rotate(temp); //rotate 270deg
+    variantStrings.push(JSON.stringify(temp));
+    temp = flip(original); //flipped once
+    variantStrings.push(JSON.stringify(temp));
+    temp = rotate(temp); //flipped once, rotate 90deg
+    variantStrings.push(JSON.stringify(temp));
+    temp = rotate(temp); //flipped once, rotate 180deg
+    variantStrings.push(JSON.stringify(temp));
+    temp = rotate(temp); //flipped once, rotate 270deg
+    variantStrings.push(JSON.stringify(temp));
+
+    var uniqueMatrix = true;
+    for (var i=0;i<variantStrings.length;i++){
+      if (stringSolutions[variantStrings[i]] !== undefined){
+        uniqueMatrix = false;
+      }
+    }
+    if (uniqueMatrix) {
+      stringSolutions[JSON.stringify(original)] = 1;
+      solutions.push(original);
+    }
   }
 
   var solutionCount = solutions.length;
