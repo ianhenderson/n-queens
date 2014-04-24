@@ -240,6 +240,10 @@
       }
 
       return false; // this was SO fixed. >:D
+    },
+
+    hasAnyDiagonalConflicts: function() {
+      return this.hasAnyMajorDiagonalConflicts() || this.hasAnyMinorDiagonalConflicts();
     }
 
     /*--------------------  End of Helper Functions  ---------------------*/
