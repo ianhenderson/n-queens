@@ -79,12 +79,45 @@
     //
     // test if a specific row on this board contains a conflict
     hasRowConflictAt: function(rowIndex) {
-      return false; // fixme
+      var row;
+      if ( arguments[1] !== undefined ) {
+        var n = Math.sqrt(arguments[1].length);
+        row = Math.floor(rowIndex / n);
+        row = arguments[1].slice( row*n, (row+1)*n );
+      } else {
+        row = this.rows()[rowIndex]; //totally!
+      }
+
+      for ( var i = 0, count = 0; i < row.length; i++ ) {
+        if ( row[i] !== 0 ) {
+          count++;
+          if ( count > 1 ) {
+            return true;
+          }
+        }
+      }
+      return false; // fixed
     },
 
     // test if any rows on this board contain conflicts
     hasAnyRowConflicts: function() {
-      return false; // fixme
+      var tmp = [];
+      if (arguments[0] !== undefined){
+        var n = Math.sqrt(arguments[0].length);
+        for (var i=0; i<n; i++){
+          var row = arguments[0].slice( i*n, (i+1)*n )
+          tmp.push(row);
+        }
+        tmp = new Board(tmp);
+      } else{
+        tmp = this;
+      }
+      for (i=0; i<tmp.length; i++){
+        if (tmp.hasRowConflictAt(i)) {
+          return true;
+        }
+      }
+      return false; // fixed!!
     },
 
 

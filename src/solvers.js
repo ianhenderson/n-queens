@@ -13,75 +13,75 @@
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n rooks placed such that none of them can attack each other
 
-window.findNRooksSolution = function(n) {
-  var nSq = n*n;
-  var solution = [];
-  for (var index = 0; index < nSq; index++) {
-    solution.push( 0 );
+window.findNRooksSolution = function( n ) {
+  var solution = new Board( { 'n': n } );
+  if ( n === 1 ) {
+    solution = new Board( [[1]] );
+    if ( arguments[1] !== undefined ) {
+      if ( arguments[1][0] === 1 ) {
+        return null;
+      }
+      arguments[1][0] = 1;
+    }
+    return solution.rows();
   }
+
   //  check for initial arguments
   //    if they exist, use them.
   //    if not, set to default.
   //      default positions should be across the top row
-  var pieces = [];
-  for (index = 0; index < n; index++) {
+  var pieces = [];  //  array of tuples [ rowIndex, columnIndex ]
+  for ( var index = 0; index < n; index++ ) {
     if ( arguments[index+1] !== undefined ) {
       pieces.push( arguments[index+1] );
-      solution[ arguments[index+1] ] = 1;
+      solution.togglePiece( pieces[index][0], pieces[index][1] );
     } else {
-      pieces.push(index);
-      solution[index] = 1;
+      pieces.push( [ 0, index ] );
+      solution.togglePiece( pieces[index][0], pieces[index][1] );
     }
   }
   var lastPiece = pieces.length - 1;
 
-  //  helper function to check for row occupancy
-  //
-  //  do...
   do {
   //    move last piece down one row
   //      if row occupied, move again
     do {
-      solution[pieces[lastPiece]] = 0;
-      pieces[lastPiece] += n;
-      if (pieces[lastPiece] < nSq)  {
-        solution[pieces[lastPiece]] = 1;
+      solution.togglePiece( pieces[lastPiece][0], pieces[lastPiece][1] );
+      pieces[lastPiece][0] += 1;
+      if (pieces[lastPiece][0] < n)  {
+        solution.togglePiece( pieces[lastPiece][0], pieces[lastPiece][1] );
       }
-    } while(window.Board.hasRowConflictAt.call( this, pieces[lastPiece], solution) && pieces[lastPiece] < nSq);
+    } while( pieces[lastPiece][0] < n && solution.hasRowConflictAt( pieces[lastPiece][0] ) );
+
   //      loop while pieces[lastPiece] >= n*n && lastPiece > 0
-    while (pieces[lastPiece] >= nSq && lastPiece > 0) {
+    while ( pieces[lastPiece][0] >= n && lastPiece > 0 ) {
   //        set pieces[lastPiece] to index [lastPiece]
   //        lastPiece--;
   //        move pieces[lastPiece] down one row
   //         if occupied, move again
-      pieces[lastPiece] =  lastPiece;
-      solution[lastPiece] = 1;
+      pieces[lastPiece][0] = 0;
+      solution.togglePiece( pieces[lastPiece][0], pieces[lastPiece][1] );
       lastPiece--;
-      do {
-        solution[pieces[lastPiece]] = 0;
-        pieces[lastPiece] += n;
-        if (pieces[lastPiece] < nSq)  {
-          solution[pieces[lastPiece]] = 1;
-        }
-      } while(window.Board.hasRowConflictAt.call( this, pieces[lastPiece], solution) && pieces[lastPiece] < nSq);
 
+      do {
+        solution.togglePiece( pieces[lastPiece][0], pieces[lastPiece][1] );
+        pieces[lastPiece][0] += 1;
+        if (pieces[lastPiece][0] < n)  {
+          solution.togglePiece( pieces[lastPiece][0], pieces[lastPiece][1] );
+        }
+      } while( pieces[lastPiece][0] < n && solution.hasRowConflictAt( pieces[lastPiece][0] ) );
     }
-  //
   //    set lastPiece = n-1;
     lastPiece = n - 1;
   //  ...while loop to iterate pieces over board as long as pieces[0] < n*n && there are collisions
-  } while ( pieces[0] < nSq && window.Board.hasAnyRowConflicts.call( this, solution ) );
+  } while ( pieces[0][0] < n && solution.hasAnyRowConflicts() );
   //
   //  return array (or null)
-  if (pieces[0] >= nSq) {
+  if (pieces[0][0] >= n) {
     return null;
   } else {
   //  build array to return
-    var temp = [];
-    for (var i=0;i<n;i++){
-      temp.push( solution.slice( i*n, (i+1)*n ) );
-    }
-    solution = temp;
+    solution = solution.rows();
   }
   //
 
@@ -98,14 +98,14 @@ window.createAllNRooksSolutions = function(n) {
   var pieces = [n]; // array with n, and pieces' initial values
 
   for (var piece=0; piece<n; piece++){ // initialize pieces' values
-    pieces.push(piece);
+    pieces.push( [ 0, piece ] );
   }
 
   while (!isDone){
     rookSolution = window.findNRooksSolution.apply(this, pieces);
     if (rookSolution !== undefined && rookSolution !== null){
       solutions.push(rookSolution);
-    } else{
+    } else {
       isDone = true;
     }
   }
@@ -115,9 +115,14 @@ window.createAllNRooksSolutions = function(n) {
 
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
-  var solutions = window.createAllNRooksSolutions(n);
-  var solutionCount = solutions.length;
+  var unfilteredSolutions = window.createAllNRooksSolutions(n);
+  var solutions = [];
 
+  for ( var num = 0; num < unfilteredSolutions.length; num++ ) {
+
+  }
+
+  var solutionCount = solutions.length;
   console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
   return solutionCount;
 };
