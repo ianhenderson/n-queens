@@ -1,6 +1,5 @@
 
 
-
 var BoardRow = function(parent, position, columnFilter, majorDFilter, minorDFilter){
   this.m_parent = parent;
   this.m_position = position;
@@ -28,6 +27,8 @@ var translate = function( row, n ){
 };
 
 var createNQueensTree = function( n ){
+  var startTime = new Date().getTime();
+
   var solutions = [];
   var leftColumn = 1 << (n-1);
   var flipFilterMask = ( 1 << n ) - 1;
@@ -84,7 +85,10 @@ var createNQueensTree = function( n ){
   };
 
   placeNextPiece( rowQueue[0] );
+  var endTime = new Date().getTime();
   console.log( solutions.length );
+  console.log( "Completed in: " + (endTime - startTime) + " ms");
+
   return solutions;
 };
 //  insertion function:
